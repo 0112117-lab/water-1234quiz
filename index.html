@@ -1810,9 +1810,10 @@ function askAI(){
   copyText(p).then(()=>{
     toast('질문이 복사되었습니다 🤖');
     setTimeout(()=>{
-      if(confirm('질문이 복사되었습니다.\nAI 채팅을 열까요?\n(확인=Claude / 취소=ChatGPT)'))
-        window.open('https://claude.ai/new','_blank');
-      else window.open('https://chatgpt.com/','_blank');
+      const sel=prompt('질문이 복사되었습니다.\n어느 AI로 열까요?\n1 = 지피티(ChatGPT)\n2 = 클로드(Claude)','1');
+      if(sel===null)return; // 취소 시 아무것도 안 열기
+      if(sel.trim()==='2') window.open('https://claude.ai/new','_blank');
+      else window.open('https://chatgpt.com/','_blank'); // 1 또는 기본값 = 지피티
     },300);
   });
 }
