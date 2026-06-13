@@ -75,6 +75,19 @@ textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05
 .aiBox{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
 footer{padding:12px;text-align:center;color:var(--sub);font-size:12px}
 .party{position:fixed;pointer-events:none;z-index:98;font-size:22px;will-change:transform,opacity}
+.mbg{position:fixed;inset:0;background:rgba(6,7,22,.74);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:200;display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;pointer-events:none;transition:opacity .22s}
+.mbg.show{opacity:1;pointer-events:auto}
+.mcard{width:100%;max-width:360px;background:linear-gradient(165deg,rgba(40,28,72,.97),rgba(16,15,38,.97));border:1px solid rgba(167,139,250,.4);border-radius:26px;padding:24px 20px;box-shadow:0 24px 70px rgba(124,77,255,.45),inset 0 1px 0 rgba(255,255,255,.07);transform:translateY(16px) scale(.95);transition:transform .26s cubic-bezier(.2,.85,.3,1)}
+.mbg.show .mcard{transform:none}
+.mcard .mtit{font-size:20px;font-weight:900;letter-spacing:-.5px;background:linear-gradient(90deg,#a78bfa,#ff7ab8,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.mcard .mdesc{color:var(--sub);font-size:13px;margin:5px 0 18px}
+.aibtn{display:flex;align-items:center;gap:13px;width:100%;border:0;border-radius:18px;padding:16px;font-size:16.5px;font-weight:800;color:#fff;margin-top:11px;cursor:pointer;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.32);transition:transform .12s}
+.aibtn:active{transform:scale(.96)}
+.aibtn .ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:rgba(255,255,255,.18);flex-shrink:0}
+.aibtn .num{margin-left:auto;font-size:13px;font-weight:900;opacity:.9;background:rgba(255,255,255,.2);border-radius:8px;padding:2px 9px}
+.gpt{background:linear-gradient(135deg,#0d8c6d,#16d39a)}
+.claude{background:linear-gradient(135deg,#c45c3c,#ff8a5b)}
+.mx{display:block;width:100%;text-align:center;color:var(--sub);background:none;border:0;margin-top:15px;font-size:14px;font-weight:700;cursor:pointer;padding:8px}
 </style>
 </head>
 <body>
@@ -84,6 +97,13 @@ footer{padding:12px;text-align:center;color:var(--sub);font-size:12px}
 <footer>학습기록은 이 기기 브라우저에 저장됩니다 · 설정에서 백업 가능</footer>
 </div>
 <div id="toast"></div>
+<div id="aiModal" class="mbg" onclick="if(event.target===this)closeAI()"><div class="mcard">
+  <div class="mtit">🤖 어디에 물어볼까요?</div>
+  <div class="mdesc">질문이 복사됐어요 ✓ · 붙여넣기만 하면 끝!</div>
+  <button class="aibtn gpt" onclick="openAI('gpt')"><span class="ico">⚡</span><span>지피티 ChatGPT</span><span class="num">1</span></button>
+  <button class="aibtn claude" onclick="openAI('claude')"><span class="ico">✦</span><span>클로드 Claude</span><span class="num">2</span></button>
+  <button class="mx" onclick="closeAI()">닫기</button>
+</div></div>
 <script>
 /* ===================== 데이터 =====================
    필드: g그룹키, gt그룹제목, s과목, n번호, q문제, c보기4, a정답(1~4), e해설 */
@@ -1807,15 +1827,13 @@ function askAI(){
   let p=`[정수시설운영관리사 ${q.gt} / ${q.s} ${q.n}번]\n문제: ${q.q}\n`;
   q.c.forEach((c,i)=>p+=`${CIRC[i]} ${c}\n`);
   p+=`정답: ${CIRC[q.a-1]}\n내가 고른 답: ${ans?CIRC[ans-1]:'(없음)'}\n\n정답인 이유와 나머지 보기가 틀린 이유를 수험생이 이해하기 쉽게 설명해줘. 관련 핵심 개념도 같이 정리해줘.`;
-  copyText(p).then(()=>{
-    toast('질문이 복사되었습니다 🤖');
-    setTimeout(()=>{
-      const sel=prompt('질문이 복사되었습니다.\n어느 AI로 열까요?\n1 = 지피티(ChatGPT)\n2 = 클로드(Claude)','1');
-      if(sel===null)return; // 취소 시 아무것도 안 열기
-      if(sel.trim()==='2') window.open('https://claude.ai/new','_blank');
-      else window.open('https://chatgpt.com/','_blank'); // 1 또는 기본값 = 지피티
-    },300);
-  });
+  copyText(p).then(()=>{$('#aiModal').classList.add('show')});
+}
+function closeAI(){$('#aiModal').classList.remove('show')}
+function openAI(which){
+  $('#aiModal').classList.remove('show');
+  // 버튼 탭(사용자 제스처) 즉시 이동 — 한 번에 열림
+  window.open(which==='claude'?'https://claude.ai/new':'https://chatgpt.com/','_blank');
 }
 function copyText(t){
   if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t));
