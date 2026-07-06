@@ -2520,8 +2520,25 @@ function addHome(){
   }
 }
 function closeAI(){$('#aiModal').classList.remove('show')}
+function resumeToQuestion(key,n){
+  // 지정한 회차의 특정 문항 번호로 정확히 복귀
+  const ex=examsList().find(e=>e.key===key);
+  if(!ex)return false;
+  const qs=[...ex.qs];
+  let idx=qs.findIndex(q=>q.n===n);
+  if(idx<0)idx=0;
+  S.exams[key]=S.exams[key]||{answers:{}};
+  view={type:'quiz',key,qs,idx,title:examTitle(ex)};
+  S.last={key};persist();
+  renderQ();
+  return true;
+}
 function openAI(which){
   $('#aiModal').classList.remove('show');
+  // AI 앱으로 나가기 직전, 지금 보던 문제 위치를 저장 → 돌아왔을 때 자동 복귀용
+  if(view&&view.type==='quiz'&&view.qs&&view.qs[view.idx]){
+    S._aiReturn={key:view.key,n:view.qs[view.idx].n,t:Date.now()};persist();
+  }
   // 스마트폰: 설치된 앱(클로드/지피티)으로 바로 이동. 미설치 시 웹으로 자동 폴백.
   const web={
     claude:'https://claude.ai/new',
@@ -2555,7 +2572,17 @@ function fallbackCopy(t){
   document.body.removeChild(ta);
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-goHome();
+function boot(){
+  // AI 앱에 다녀와 앱이 재시작된 경우: 6시간 이내면 마지막 풀던 문제로 자동 복귀
+  const r=S._aiReturn;
+  if(r&&r.key&&(Date.now()-(r.t||0))<6*3600*1000){
+    delete S._aiReturn; persist();
+    if(resumeToQuestion(r.key,r.n)){toast('풀던 문제로 돌아왔어요 ↩️');return;}
+  }
+  if(S._aiReturn){delete S._aiReturn;persist();} // 오래된 플래그 정리
+  goHome();
+}
+boot();
 </script>
 </body>
 </html>
