@@ -2582,6 +2582,18 @@ function boot(){
   if(S._aiReturn){delete S._aiReturn;persist();} // 오래된 플래그 정리
   goHome();
 }
+// AI 앱(특히 뒤로가기가 홈으로 빠지는 ChatGPT)에서 돌아와 퀴즈가 다시 보이는 순간 복구
+function tryAiReturn(){
+  const r=S._aiReturn;
+  if(!(r&&r.key&&(Date.now()-(r.t||0))<6*3600*1000))return;
+  // 이미 그 문제 화면이면 플래그만 정리
+  if(view&&view.type==='quiz'&&view.key===r.key){delete S._aiReturn;persist();return;}
+  delete S._aiReturn;persist();
+  if(resumeToQuestion(r.key,r.n))toast('풀던 문제로 돌아왔어요 ↩️');
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tryAiReturn();});
+window.addEventListener('pageshow',()=>tryAiReturn());
+window.addEventListener('focus',()=>tryAiReturn());
 boot();
 </script>
 </body>
