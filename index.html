@@ -18,12 +18,6 @@
 body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;color:var(--ink);font-size:16px;line-height:1.55;
 background:#0e1024;background-image:radial-gradient(800px 500px at 85% -10%,rgba(139,92,246,.35),transparent 60%),radial-gradient(700px 450px at -10% 30%,rgba(255,77,158,.22),transparent 60%),radial-gradient(600px 400px at 50% 110%,rgba(34,211,238,.18),transparent 60%);background-attachment:fixed}
 #app{max-width:560px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
-@media(min-width:768px){
-  #app{max-width:760px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(255,255,255,.015);box-shadow:0 0 60px rgba(0,0,0,.35)}
-  main{padding:22px 30px}
-  header{padding:16px 30px}
-}
-@media(min-width:1280px){#app{max-width:840px}}
 header{background:rgba(14,16,36,.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:14px 16px;position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
 header h1{font-size:18px;font-weight:800;flex:1;color:#f2f3ff;text-shadow:0 1px 8px rgba(0,0,0,.55)}
 header button{background:rgba(255,255,255,.1);border:1px solid var(--line);color:#fff;border-radius:12px;padding:7px 14px;font-size:14px;font-weight:700;cursor:pointer}
@@ -59,8 +53,8 @@ h2{font-size:16px;margin-bottom:8px;font-weight:800}
 .streak{font-size:13px;font-weight:800;background:linear-gradient(135deg,rgba(255,140,0,.25),rgba(255,77,158,.25));border:1px solid rgba(255,160,80,.45);border-radius:99px;padding:3px 10px;white-space:nowrap}
 .star{font-size:22px;background:none;border:0;color:#4a517a;cursor:pointer}
 .star.on{color:#ffd34d;text-shadow:0 0 12px rgba(255,211,77,.7)}
-.qtext{font-size:17px;font-weight:700;white-space:pre-wrap;margin-bottom:14px}
-.choice{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:16px;padding:13px;margin-bottom:9px;cursor:pointer;background:rgba(255,255,255,.04);white-space:pre-wrap;transition:transform .1s,border-color .15s}
+.qtext{font-size:calc(17px * var(--fs-mult,1));font-weight:700;white-space:pre-wrap;margin-bottom:14px}
+.choice{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:16px;padding:13px;margin-bottom:9px;cursor:pointer;background:rgba(255,255,255,.04);white-space:pre-wrap;transition:transform .1s,border-color .15s;font-size:calc(16px * var(--fs-mult,1))}
 .choice:active{transform:scale(.98)}
 .choice .no{font-weight:800;color:#a78bfa;flex-shrink:0}
 .choice.right{border-color:var(--ok);background:rgba(52,245,168,.12);box-shadow:0 0 18px rgba(52,245,168,.25);animation:pop .35s}
@@ -100,15 +94,79 @@ footer{padding:12px;text-align:center;color:var(--sub);font-size:12px}
 .gpt{background:linear-gradient(135deg,#0d8c6d,#16d39a)}
 .claude{background:linear-gradient(135deg,#c45c3c,#ff8a5b)}
 .mx{display:block;width:100%;text-align:center;color:var(--sub);background:none;border:0;margin-top:15px;font-size:14px;font-weight:700;cursor:pointer;padding:8px}
+/* ===== 데스크톱 전용 (768px 이상). 폰은 영향 없음 ===== */
+@media(min-width:768px){
+  #app{max-width:960px;border-left:1px solid var(--line);border-right:1px solid var(--line);background:rgba(255,255,255,.015);box-shadow:0 0 60px rgba(0,0,0,.35)}
+  main{padding:26px 40px}
+  header{padding:16px 40px}
+  .card{padding:32px 30px;margin-bottom:16px}
+  .qtext{font-size:calc(20px * var(--fs-mult,1));line-height:1.55;margin-bottom:22px}
+  .choice{padding:18px 20px;margin-bottom:14px;font-size:calc(18px * var(--fs-mult,1));line-height:1.55}
+  .btn{padding:18px;font-size:18px}
+  .grid{margin-top:16px}
+}
+@media(min-width:1280px){#app{max-width:1080px}}
+
+/* ===== 글자 굵게·명조체 옵션 (모든 기기 적용) ===== */
+body.opt-bold .qtext{font-weight:900}
+body.opt-bold .choice{font-weight:700}
+body.opt-bold .choice .no{font-weight:900}
+body.opt-serif .qtext,
+body.opt-serif .choice{font-family:'Noto Serif KR','Nanum Myeongjo','Batang','바탕',serif}
+
+/* ===== 글자 설정 패널 (모든 기기, 기본 숨김 → Aa로 열기) ===== */
+#fontPanel{display:block;position:fixed;top:76px;right:12px;
+  width:160px;min-width:130px;max-width:440px;min-height:150px;resize:both;overflow:auto;
+  background:linear-gradient(165deg,rgba(40,28,72,.95),rgba(16,15,38,.95));
+  border:1px solid rgba(167,139,250,.4);border-radius:20px;padding:14px;z-index:120;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);backdrop-filter:blur(10px)}
+@media(min-width:1180px){
+  #fontPanel{top:50%;right:24px;transform:translateY(-50%)}
+}
+#fontPanel .fp-title{font-size:13px;font-weight:800;color:#e9defc;margin-bottom:12px;text-align:center;cursor:move;user-select:none;position:relative;touch-action:none}
+#fontPanel .fp-title .grip{opacity:.55;margin-right:5px;letter-spacing:1px}
+#fontPanel .fp-min{position:absolute;right:-4px;top:-4px;border:0;background:rgba(255,255,255,.12);color:#fff;
+  width:22px;height:22px;border-radius:7px;font-size:14px;font-weight:900;line-height:1;cursor:pointer}
+/* 접힌 상태: 패널 완전 숨김 (헤더 Aa 버튼으로 다시 열기) */
+#fontPanel.min{display:none !important}
+/* 헤더 Aa 버튼: 모든 기기에서 표시 */
+#fpHead{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--line);color:#fff;
+  border-radius:12px;padding:7px 12px;font-size:14px;font-weight:800;cursor:pointer;margin-left:8px}
+#fontPanel .fp-hint{font-size:10px;color:var(--sub);text-align:center;margin-top:10px;opacity:.7;line-height:1.4}
+#fontPanel .fp-label{font-size:12px;color:var(--sub);font-weight:700;margin-bottom:6px}
+#fontPanel .fp-size{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+#fontPanel .fp-size button{flex:1;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);
+  border-radius:10px;padding:8px 0;font-size:18px;font-weight:900;cursor:pointer}
+#fontPanel .fp-size button:active{transform:scale(.94)}
+#fontPanel .fp-pct{font-size:13px;font-weight:800;color:#fff;min-width:42px;text-align:center}
+#fontPanel .fp-toggle{display:block;width:100%;border:1px solid var(--line);background:rgba(255,255,255,.05);
+  color:var(--ink);border-radius:12px;padding:10px;font-size:13px;font-weight:800;cursor:pointer;margin-top:8px;transition:.15s}
+#fontPanel .fp-toggle.on{background:linear-gradient(135deg,#7c4dff,#ff4d9e);border-color:transparent;color:#fff;
+  box-shadow:0 6px 18px rgba(140,77,255,.4)}
+#fontPanel .fp-reset{display:block;width:100%;background:none;border:0;color:var(--sub);font-size:12px;
+  font-weight:700;cursor:pointer;margin-top:12px;padding:4px}
 </style>
 </head>
 <body>
 <div id="app">
-<header><h1 id="hTitle">💧 정수퀴즈</h1><button id="hBack" style="display:none" onclick="goHome()">🏠 홈</button></header>
+<header><h1 id="hTitle">💧 정수퀴즈</h1><button id="hBack" style="display:none" onclick="goHome()">🏠 홈</button><button id="fpHead" onclick="fpPanelToggle()" title="글자 설정">Aa</button></header>
 <main id="main"></main>
 <footer>학습기록은 이 기기 브라우저에 저장됩니다 · 설정에서 백업 가능</footer>
 </div>
 <div id="toast"></div>
+<div id="fontPanel">
+  <div class="fp-title"><span class="grip">⠿</span>글자 설정<button class="fp-min" onclick="fpMin(event)" title="접기">−</button></div>
+  <div class="fp-label">크기</div>
+  <div class="fp-size">
+    <button onclick="fpSize(-1)">−</button>
+    <span class="fp-pct" id="fpPct">100%</span>
+    <button onclick="fpSize(1)">+</button>
+  </div>
+  <button class="fp-toggle" id="fpBold" onclick="fpToggle('bold')">굵게</button>
+  <button class="fp-toggle" id="fpSerif" onclick="fpToggle('serif')">명조체</button>
+  <button class="fp-reset" onclick="fpReset()">기본값으로</button>
+  <div class="fp-hint">제목을 끌어 이동 · 모서리를 당겨 크기 조절</div>
+</div>
 <div id="aiModal" class="mbg" onclick="if(event.target===this)closeAI()"><div class="mcard">
   <div class="mtit">🤖 어디에 물어볼까요?</div>
   <div class="mdesc">질문이 복사됐어요 ✓ · 붙여넣기만 하면 끝!</div>
@@ -116,6 +174,125 @@ footer{padding:12px;text-align:center;color:var(--sub);font-size:12px}
   <button class="aibtn claude" onclick="openAI('claude')"><span class="ico">✦</span><span>클로드 Claude</span><span class="num">2</span></button>
   <button class="mx" onclick="closeAI()">닫기</button>
 </div></div>
+<script>
+/* ===================== 글자 설정 (크기/굵게/명조체) ===================== */
+(function(){
+  var KEY='jeongsu.fontopt.v2';
+  var opt={mult:1, bold:false, serif:false};
+  try{ var s=localStorage.getItem(KEY); if(s) opt=Object.assign(opt, JSON.parse(s)); }catch(e){}
+
+  window.fpApply=function(){
+    document.documentElement.style.setProperty('--fs-mult', opt.mult);
+    document.body.classList.toggle('opt-bold', opt.bold);
+    document.body.classList.toggle('opt-serif', opt.serif);
+    var pct=document.getElementById('fpPct'); if(pct) pct.textContent=Math.round(opt.mult*100)+'%';
+    var b=document.getElementById('fpBold'); if(b) b.classList.toggle('on', opt.bold);
+    var sf=document.getElementById('fpSerif'); if(sf) sf.classList.toggle('on', opt.serif);
+    try{ localStorage.setItem(KEY, JSON.stringify(opt)); }catch(e){}
+  };
+  window.fpSize=function(dir){
+    opt.mult=Math.round((opt.mult+dir*0.1)*10)/10;
+    if(opt.mult<0.7)opt.mult=0.7; if(opt.mult>2)opt.mult=2;
+    fpApply();
+  };
+  window.fpToggle=function(k){ opt[k]=!opt[k]; fpApply(); };
+  window.fpReset=function(){ opt={mult:1,bold:false,serif:false}; fpApply(); };
+
+  if(document.readyState!=='loading') fpApply();
+  else document.addEventListener('DOMContentLoaded', fpApply);
+})();
+
+/* ===================== 글자 설정 패널: 이동/크기 조절 ===================== */
+(function(){
+  function init(){
+    var KEY='jeongsu.fppos';
+    var p=document.getElementById('fontPanel');
+    if(!p) return;
+    var title=p.querySelector('.fp-title');
+    var touched=false;
+
+    function clampToView(){
+      var maxL=window.innerWidth - p.offsetWidth;
+      var maxT=window.innerHeight - p.offsetHeight;
+      var l=parseFloat(p.style.left), t=parseFloat(p.style.top);
+      if(!isNaN(l)) p.style.left=Math.max(0,Math.min(l,maxL))+'px';
+      if(!isNaN(t)) p.style.top=Math.max(0,Math.min(t,maxT))+'px';
+    }
+    function toFreeMode(){
+      var r=p.getBoundingClientRect();
+      p.style.right='auto'; p.style.transform='none';
+      p.style.left=r.left+'px'; p.style.top=r.top+'px';
+    }
+    function save(){
+      var d={left:Math.round(parseFloat(p.style.left)||p.getBoundingClientRect().left),
+             top:Math.round(parseFloat(p.style.top)||p.getBoundingClientRect().top),
+             width:Math.round(p.offsetWidth), height:Math.round(p.offsetHeight)};
+      try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){}
+    }
+    // 복원
+    try{
+      var s=JSON.parse(localStorage.getItem(KEY)||'null');
+      if(s){
+        p.style.right='auto'; p.style.transform='none';
+        if(s.left!=null)p.style.left=s.left+'px';
+        if(s.top!=null)p.style.top=s.top+'px';
+        if(s.width!=null)p.style.width=s.width+'px';
+        if(s.height!=null)p.style.height=s.height+'px';
+        touched=true; clampToView();
+      }
+    }catch(e){}
+
+    // 드래그 이동 (제목을 손잡이로)
+    var drag=false, sx, sy, sl, st;
+    title.addEventListener('pointerdown', function(e){
+      if(e.target.closest('.fp-min')) return; // 접기 버튼은 드래그 대상에서 제외
+      drag=true; touched=true; toFreeMode();
+      var r=p.getBoundingClientRect();
+      sx=e.clientX; sy=e.clientY; sl=r.left; st=r.top;
+      try{ title.setPointerCapture(e.pointerId); }catch(_){}
+      e.preventDefault();
+    });
+    title.addEventListener('pointermove', function(e){
+      if(!drag) return;
+      var nl=sl+(e.clientX-sx), nt=st+(e.clientY-sy);
+      var maxL=window.innerWidth - p.offsetWidth, maxT=window.innerHeight - p.offsetHeight;
+      p.style.left=Math.max(0,Math.min(nl,maxL))+'px';
+      p.style.top =Math.max(0,Math.min(nt,maxT))+'px';
+    });
+    function endDrag(){ if(drag){ drag=false; save(); } }
+    title.addEventListener('pointerup', endDrag);
+    title.addEventListener('pointercancel', endDrag);
+
+    // 접기(숨김)/펼치기 — 헤더 Aa 버튼으로 토글
+    var MKEY='jeongsu.fpmin';
+    window.fpMin=function(e){
+      if(e) e.stopPropagation();
+      p.classList.add('min');
+      try{ localStorage.setItem(MKEY,'1'); }catch(_){}
+    };
+    window.fpPanelToggle=function(){
+      var hidden=p.classList.toggle('min');
+      if(!hidden) clampToView();
+      try{ localStorage.setItem(MKEY, hidden?'1':'0'); }catch(_){}
+    };
+    try{ if(localStorage.getItem(MKEY)!=='0') p.classList.add('min'); }catch(_){ p.classList.add('min'); }
+
+    // 크기 조절(모서리 당김) 감지 후 저장 — 첫 콜백은 무시, 접힘 상태는 저장 안 함
+    if(window.ResizeObserver){
+      var first=true;
+      var ro=new ResizeObserver(function(){
+        if(first){ first=false; return; }
+        if(touched && !drag && !p.classList.contains('min')) save();
+      });
+      ro.observe(p);
+    }
+    // 창 크기 바뀌면 화면 밖으로 안 나가게
+    window.addEventListener('resize', clampToView);
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
 <script>
 /* ===================== 데이터 =====================
    필드: g그룹키, gt그룹제목, s과목, n번호, q문제, c보기4, a정답(1~4), e해설 */
